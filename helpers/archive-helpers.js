@@ -1,5 +1,6 @@
 var fs = require('fs');
 var http = require('http');
+var https = require('https');
 var path = require('path');
 var _ = require('underscore');
 
@@ -44,6 +45,7 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
+  console.log(url, 'url');
   fs.appendFile(exports.paths.list, '\n' + url, 'utf-8', (err) => {
     if (err) {
       throw err;
@@ -64,23 +66,39 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrl = function(url) {
   http.get('http://' + url, function (res) {
-    var data = '';
+    console.log('url', url, 'statusCode', res.statusCode);
+
+    var stream = '';
+
     res.on('data', function (chunk) {
-      data += chunk;
-    }).on('end', function() {
-      fs.writeFile(exports.paths.archivedSites + '/' + url, data);
+      stream += chunk;
+    }).on('end', function () {
+
+      fs.open(exports.paths.archivedSites + '/' + url, 'w', function (err, fd) {
+        if (err) {
+          throw err;
+        }
+
+        fs.writeFile(exports.paths.archivedSites + '/' + url, stream, (err) => {
+          if (err) {
+            throw err;
+          }
+        });
+        fs.close(fd, function () { return; }); 
+      }); 
     });
   });
 };
 
 exports.downloadUrls = function(urls) {
-  for (var i = 0; i < urls.length; i++) {
-    exports.isUrlArchived(urls[i], function (exists) {
+  urls.forEach(function (child) {
+    exports.isUrlArchived(child, function (exists) {
       if (!exists) {
-        exports.downloadUrl(urls[i]);
+        exports.downloadUrl(child);
       }
     });
-  }
+  });
 };
+ 
 
 

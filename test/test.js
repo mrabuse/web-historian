@@ -142,9 +142,20 @@ describe('archive helpers', function() {
     });
   });
 
+  describe('#downloadUrl', function () {
+    it('should download data from url', function (done) {
+      var url = 'www.google.com';
+      archive.downloadUrl(url);
+
+      setTimeout(function () {
+        expect(fs.readFileSync(archive.paths.archivedSites + '/' + url)).to.not.equal('');
+      }, 500);
+    });
+  });
+
   describe('#downloadUrls', function () {
     it('should download all pending urls in the list', function (done) {
-      var urlArray = ['www.example.com', 'www.facebook.com', 'www.google.com'];
+      var urlArray = ['www.ask.com', 'www.example.com', 'www.google.com', 'www.opera.com'];
       archive.downloadUrls(urlArray);
 
       // Ugly hack to wait for all downloads to finish.
