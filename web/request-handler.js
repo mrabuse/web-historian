@@ -38,7 +38,7 @@ var actions = {
       archive.isUrlInList(url, function (found) {
         if (found) {
 
-          archive.isUrlArchived(url, function(exist) {
+          archive.isUrlArchived(url, function(exists) {
             if (exists) {
 
               helpers.sendRedirect(res, '/' + url);
