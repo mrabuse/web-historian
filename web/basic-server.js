@@ -1,6 +1,8 @@
 var http = require('http');
 var handler = require('./request-handler');
+var fs = require('fs');
 var initialize = require('./initialize.js');
+var archiveHelp = require('../helpers/archive-helpers.js');
 
 // Why do you think we have this here?
 // HINT: It has to do with what's in .gitignore
